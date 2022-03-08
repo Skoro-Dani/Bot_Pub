@@ -1,0 +1,1 @@
+{"ok":true,"result":{"message_id":23,"from":{"id":5289178489,"is_bot":true,"first_name":"Publicita_Skoro","username":"PublicitaSkoro_bot"},"chat":{"id":571591485,"first_name":"Edo","type":"private"},"date":1646756068,"text":"scherzo ti voglio bene"}}
