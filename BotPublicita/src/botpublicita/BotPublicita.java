@@ -17,15 +17,15 @@ public class BotPublicita {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         // TODO code application logic here
         String Token = "5289178489:AAGNqdWsbQcFq5Wbg4agZ9AQjr8bGTBQ_NA";
-        JSONfile json=new JSONfile();
-        json.CreaFile("GetUpdates.txt",Token);
-        List<String> id = json.getChatID("GetUpdates.txt");
-        for(int i=0;i<id.size();i++)
+        GestisciTelegram TeleApi=new GestisciTelegram(Token);
+        while(true)
         {
-            json.SendMessage(Token, id.get(i), "scherzo ti voglio bene");
+            TeleApi.GetUpdates();
+            TeleApi.GetAllMessageWithCitta();
+            Thread.sleep(10000);
         }
         
     }
