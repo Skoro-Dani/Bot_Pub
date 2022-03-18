@@ -10,7 +10,7 @@ package TelegramApi;
  */
 public class Persona {
     
-    private String IdChat, First_Name, Indirizzo;
+    private String IdChat, IDLastMessage, Indirizzo;
     private Float lat, lon; 
 
     public Persona() {
@@ -18,26 +18,26 @@ public class Persona {
     
     public Persona(Persona p){
         this.IdChat = p.getIdChat();
-        this.First_Name = p.getFirst_Name();
+        this.IDLastMessage = p.getIDLastMessage();
         this.lat = p.getLat();
         this.lon = p.getLon();
     }
 
     public Persona(String IdChat, String First_Name, Float lat, Float lon) {
         this.IdChat = IdChat;
-        this.First_Name = First_Name;
+        this.IDLastMessage = First_Name;
         this.lat = lat;
         this.lon = lon;
     }
     
     @Override
     public String toString() {
-        String  s = "Nome:" +  First_Name + "-IdChat:" + IdChat + "-Indirizzo:" + Indirizzo + "-Latitudine:" + Float.toString(lat) + "-Longitudine:" + Float.toString(lon);
+        String  s = "IDLastMessage:" +  IDLastMessage + "-IdChat:" + IdChat + "-Indirizzo:" + Indirizzo + "-Latitudine:" + Float.toString(lat) + "-Longitudine:" + Float.toString(lon);
         return s;
     }
     
     public String toCSV(){
-        String  s = First_Name + ";" + IdChat + ";" + Float.toString(lat) + ";" + Float.toString(lon);
+        String  s = IDLastMessage + ";" + IdChat + ";" + Float.toString(lat) + ";" + Float.toString(lon);
         return s;
     }
 
@@ -45,8 +45,8 @@ public class Persona {
         return IdChat;
     }
 
-    public String getFirst_Name() {
-        return First_Name;
+    public String getIDLastMessage() {
+        return IDLastMessage;
     }
 
     public String getIndirizzo() {
@@ -65,8 +65,8 @@ public class Persona {
         this.IdChat = IdChat;
     }
 
-    public void setFirst_Name(String First_Name) {
-        this.First_Name = First_Name;
+    public void setIDLastMessage(String First_Name) {
+        this.IDLastMessage = First_Name;
     }
 
     public void setIndirizzo(String Indirizzo) {

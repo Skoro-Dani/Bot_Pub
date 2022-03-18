@@ -35,19 +35,19 @@ import org.xml.sax.SAXException;
  */
 public class GestisciTelegram {
 
-    String uriBase = "https://api.telegram.org/bot";
+    private String uriBase = "https://api.telegram.org/bot";
     private JSONArray VetMessaggi;
     private List<Persona> VetPersone = new ArrayList<Persona>();
-    String Token;
-    
-    public GestisciTelegram(String Token) throws IOException
-    {
-        this.Token=Token;
-        GetUpdates();
-        GetAllMessageWithCitta();
+    private String Token;
+    private ReadWriteFile rw = new ReadWriteFile();
+
+    public GestisciTelegram(String Token) throws IOException {
+        /*this.Token=Token;
         CaricaVetPersonaFromCSV();
+        GetUpdates();
+        GetAllMessageWithCitta();*/
     }
-    
+
     public void GetUpdates() throws MalformedURLException, IOException {
         URL url = new URL(uriBase + Token + "/getUpdates");
         Scanner sc = new Scanner(url.openStream());
@@ -63,7 +63,7 @@ public class GestisciTelegram {
     public void SendMessageAll(String text) throws MalformedURLException, IOException {
         List<String> ChatID = getChatID("GetUpdates.txt");
         for (int i = 0; i < ChatID.size(); i++) {
-            SendMessage(ChatID.get(i),text);
+            SendMessage(ChatID.get(i), text);
         }
     }
 
@@ -104,40 +104,8 @@ public class GestisciTelegram {
         return Ris;
     }
 
-    private File ScriviSuFile(String urlParziale, String NomeFile) throws MalformedURLException, IOException {
-        URL url = new URL(urlParziale);
-        Scanner sc = new Scanner(url.openStream());
-        sc.useDelimiter("\u001a");
-
-        File f = new File(NomeFile);
-        FileWriter fw = new FileWriter(f);
-
-        fw.write(sc.next());
-        fw.flush();
-        fw.close();
-
-        return f;
-    }
-
-    private String LeggiDaFile(String nomeFile) throws FileNotFoundException, IOException {
-        //variabile di appoggio
-        File file = new File(nomeFile);
-        String jsString = "";
-        BufferedReader br = new BufferedReader(new FileReader(file));
-
-        String line = br.readLine();
-        while (line != null) {
-            jsString += line;
-            line = br.readLine();
-        }
-
-        return jsString;
-    }
-    
-    public void GetAllMessageWithCitta() throws FileNotFoundException, IOException
-    {
-        List<String> Ris = new ArrayList();
-
+    public List<JSONObject> GetAllMessageWith(String text) throws FileNotFoundException, IOException {
+        List<JSONObject> Ris = new ArrayList();
         BufferedReader reader = new BufferedReader(new FileReader("GetUpdates.txt"));
         String jsonString = "";
         String line = reader.readLine();
@@ -150,18 +118,18 @@ public class GestisciTelegram {
         JSONObject obj = new JSONObject(jsonString);
         JSONArray arr = obj.getJSONArray("result");
         for (int i = 0; i < arr.length(); i++) {
-            JSONObject appoggio = new JSONObject(VetMessaggi.get(i).toString());
-            JSONObject messaggio = appoggio.getJSONObject("message");
-            JSONObject chat = messaggio.getJSONObject("chat");
-            String ID = Integer.toString(chat.getInt("id"));
-            String Nome = chat.getString("first_name");
-            //controllo che l'id non sia già stato inserito, se manca lo aggiungo alla lista
-            if (!VetPersone.contains(ID.toString())) {
-                VetPersone.add(new Persona(ID, Nome, 0.0f, 0.0f));
+            JSONObject update = arr.getJSONObject(i);
+            JSONObject mess = update.getJSONObject("message");
+            if(mess.getString("text").contains(text))
+            {
+                //aggiungo al vettore
+                //Ris.add("");
             }
         }
+        return Ris;
     }
-    private void VetPersonetoCSV() {
+
+    public void VetPersonetoCSV() {
         try {
 
             FileWriter fw = new FileWriter("Persone.csv");
@@ -179,7 +147,7 @@ public class GestisciTelegram {
         }
     }
 
-    private void CaricaVetPersonaFromCSV() {
+    public void CaricaVetPersonaFromCSV() {
         try {
 
             VetPersone.clear();
@@ -209,73 +177,14 @@ public class GestisciTelegram {
             Logger.getLogger(GestisciTelegram.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    private void CaricaVetMessaggi() throws IOException
-    {
-        String Response = LeggiDaFile("GetUpdates.txt");
+
+    private void CaricaVetMessaggi() throws IOException {
+        String Response = rw.LeggiDaFile("GetUpdates.txt");
         //parso la stringa
         JSONObject obj = new JSONObject(Response);
         //VetMesssaggi contiene tutti i messaggi inviati al bot
         VetMessaggi = obj.getJSONArray("result");
     }
-    
-    public void myGetLocation(String Indirizzo, String Id, String CAP) throws ParserConfigurationException, SAXException, IOException {
-        //genero l'URL e scrivo il risultato su file
-        String urlParziale = "https://nominatim.openstreetmap.org/search?q=" + URLEncoder.encode(Indirizzo, StandardCharsets.UTF_8) + "&format=xml&addressdetails=1";
-        File RispostaSito = ScriviSuFile(urlParziale, "RispostaSito.txt");
-        System.out.println(urlParziale);
-        //Parso il file XML scritto prima per ricavare gli oggetti
-        DocumentBuilderFactory factory;
-        DocumentBuilder builder;
-        Document document;
-        Element root, node;
-        NodeList nodelist;
 
-        factory = DocumentBuilderFactory.newInstance();
-        builder = factory.newDocumentBuilder();
-
-        document = builder.parse(RispostaSito);
-
-        root = document.getDocumentElement();
-
-        nodelist = root.getElementsByTagName("place");
-
-        //ciclo la lista per trovare la persona con lo stesso ID passato
-        GetUpdates();
-        int i = 0;
-        boolean trovato = false, capTrovato = false;
-        while (!trovato && i < VetPersone.size()) {
-            if (VetPersone.get(i).getIdChat().equals(Id)) {
-                for (int j = 0; j < nodelist.getLength(); j++) {
-                    node = (Element) nodelist.item(j);
-                    String strcap = trovaCAP(node.getAttribute("display_name"));
-                    if (CAP.equals(strcap)){
-                        VetPersone.get(i).setLat(Float.parseFloat(node.getAttribute("lat")));
-                        VetPersone.get(i).setLon(Float.parseFloat(node.getAttribute("lon")));
-                        capTrovato = true;
-                    }
-                }
-                trovato = true;
-            }
-        }
-        if (capTrovato) {
-            VetPersonetoCSV();
-            System.out.println("Poszione trovata, CSV aggiornato");
-        } else {
-            System.out.println("Posizione non trovata");
-        }
-        
-    }
-
-    private String trovaCAP(String displayname) {
-        String strCAP = "";
-        if(displayname != null) {
-            String[] elementi = displayname.split(",");
-            strCAP = elementi[elementi.length - 2];
-            strCAP = strCAP.substring(1);
-            int i = Integer.parseInt(strCAP);
-        }
-        return strCAP;
-    }
 
 }
