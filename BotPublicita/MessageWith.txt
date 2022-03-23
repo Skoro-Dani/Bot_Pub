@@ -1,0 +1,1 @@
+{"date":1648070681,"entities":[{"offset":0,"length":6,"type":"bot_command"}],"chat":{"id":506257867,"type":"private","first_name":"Skoro","username":"SK0R0"},"message_id":33,"from":{"language_code":"it","id":506257867,"is_bot":false,"first_name":"Skoro","username":"SK0R0"},"text":"/citta canzo"}

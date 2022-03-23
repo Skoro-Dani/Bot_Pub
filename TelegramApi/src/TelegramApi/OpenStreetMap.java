@@ -53,6 +53,6 @@ public class OpenStreetMap {
     }
 
     public static double calcolaDistanza(String lat1,String lon1,String lat2,String lon2){
-        return Math.acos(Math.cos(Math.toRadians(90-Integer.parseInt(lat1)))*Math.cos(Math.toRadians(90-Integer.parseInt(lat2)))+Math.sin(Math.toRadians(90-Integer.parseInt(lat1)))*Math.sin(Math.toRadians(90-Integer.parseInt(lat2)))*Math.cos(Math.toRadians(Integer.parseInt(lon1)-Integer.parseInt(lon2))))*6371*1000;
+        return Math.acos(Math.cos(Math.toRadians(90-Double.valueOf(lat1)))*Math.cos(Math.toRadians(90-Double.valueOf(lat2)))+Math.sin(Math.toRadians(90-Double.valueOf(lat1)))*Math.sin(Math.toRadians(90-Double.valueOf(lat2)))*Math.cos(Math.toRadians(Double.valueOf(lon1)-Double.valueOf(lon2))))*6371*1000;
     }
 }

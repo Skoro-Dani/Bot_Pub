@@ -39,14 +39,19 @@ public class GestisciTelegram {
 
     private String uriBase = "https://api.telegram.org/bot";
     private JSONArray VetMessaggi;
-    private Map<String, Persona> Persone = new HashMap<String, Persona>();
-
     private List<Persona> VetPersone = new ArrayList<Persona>();
     private String Token;
     private ReadWriteFile rw = new ReadWriteFile();
 
     public GestisciTelegram(String Token) throws IOException {
+        this.Token = Token;
+    }
 
+    public GestisciTelegram() throws IOException {
+    }
+
+    public void setToken(String Token) {
+        this.Token = Token;
     }
 
     public void GetUpdates() throws MalformedURLException, IOException {
@@ -121,7 +126,7 @@ public class GestisciTelegram {
             JSONObject update = arr.getJSONObject(i);
             JSONObject mess = update.getJSONObject("message");
             rw.ScriviSuFileAppend("MessageWith.txt", mess.toString());
-            Pubblicita(update,text);
+            Pubblicita(update, text);
         }
         return Ris;
     }
@@ -178,11 +183,11 @@ public class GestisciTelegram {
                 String[] elementi = riga.split(";");
 
                 String id = elementi[0];
-                String nome = elementi[1];
+                int IDLastMessage = Integer.valueOf(elementi[1]);
                 Float lat = Float.parseFloat(elementi[2]);
                 Float lon = Float.parseFloat(elementi[3]);
 
-                Persona p = new Persona(id, nome, lat, lon);
+                Persona p = new Persona(id, IDLastMessage, lat, lon);
                 VetPersone.add(p);
             }
 
@@ -204,7 +209,7 @@ public class GestisciTelegram {
         VetMessaggi = obj.getJSONArray("result");
     }
 
-    public void Pubblicita(JSONObject update,String text) throws ParserConfigurationException, SAXException, IOException {
+    public void Pubblicita(JSONObject update, String text) throws ParserConfigurationException, SAXException, IOException {
 
         JSONObject mess = update.getJSONObject("message");
         JSONObject chat = mess.getJSONObject("chat");
@@ -238,6 +243,18 @@ public class GestisciTelegram {
                 temp.setIdChat(String.valueOf(chat.getInt("id")));
                 VetPersone.add(temp);
             }
+        }
+    }
+
+    public void InviaPubblicita(String citta, double raggio, String messaggio) throws ParserConfigurationException, SAXException, IOException {
+        String lanlon = OpenStreetMap.myGetLocation(citta);
+        String lan = lanlon.split(";")[0];
+        String lon = lanlon.split(";")[1];
+        double tempDistanza = 0;
+        for (int j = 0; j < VetPersone.size(); j++) {
+            tempDistanza = OpenStreetMap.calcolaDistanza(lan,lon,VetPersone.get(j).getLat().toString(),VetPersone.get(j).getLon().toString());
+            if(tempDistanza<=raggio)
+                SendMessage(VetPersone.get(j).getIdChat(),messaggio);
         }
     }
 

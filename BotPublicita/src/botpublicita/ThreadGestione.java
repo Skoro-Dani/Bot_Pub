@@ -24,16 +24,14 @@ public class ThreadGestione extends Thread {
     private boolean Finito;
     private Object FinitoOBJ = new Object();
     private GestisciTelegram TeleApi;
+    private DatiCondivi dati= DatiCondivi.getMioSingolo();
     
-    public ThreadGestione(String token) throws IOException {
-        this.Token = Token;
-        Finito = false;
-        TeleApi = new GestisciTelegram(Token);
-        waitMS = 10000;
+    public ThreadGestione() throws IOException {
     }
 
     @Override
     public void run() {
+        TeleApi= dati.GetGestisciTelegram();
         TeleApi.CaricaVetPersonaFromCSV();
         while (isFinito() == false) {
             try {

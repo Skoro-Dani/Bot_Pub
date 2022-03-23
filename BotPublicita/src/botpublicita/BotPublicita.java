@@ -22,11 +22,9 @@ public class BotPublicita {
      */
     public static void main(String[] args) throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         // TODO code application logic here
-        String Token = "5289178489:AAGNqdWsbQcFq5Wbg4agZ9AQjr8bGTBQ_NA";
-        GestisciTelegram TeleApi=new GestisciTelegram(Token);
-        OpenStreetMap osm= new OpenStreetMap();
-        osm.myGetLocation("via brusa 6");
-
+        DatiCondivi Dati= DatiCondivi.getMioSingolo();
+        Grafica g = new Grafica();
+        g.show();
         
     }
     
