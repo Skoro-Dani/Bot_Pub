@@ -15,7 +15,9 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,15 +39,14 @@ public class GestisciTelegram {
 
     private String uriBase = "https://api.telegram.org/bot";
     private JSONArray VetMessaggi;
+    private Map<String, Persona> Persone = new HashMap<String, Persona>();
+
     private List<Persona> VetPersone = new ArrayList<Persona>();
     private String Token;
     private ReadWriteFile rw = new ReadWriteFile();
 
     public GestisciTelegram(String Token) throws IOException {
-        /*this.Token=Token;
-        CaricaVetPersonaFromCSV();
-        GetUpdates();
-        GetAllMessageWithCitta();*/
+
     }
 
     public void GetUpdates() throws MalformedURLException, IOException {
@@ -104,13 +105,12 @@ public class GestisciTelegram {
         return Ris;
     }
 
-    public List<JSONObject> GetAllMessageWith(String text) throws FileNotFoundException, IOException {
-        List<JSONObject> Ris = new ArrayList();
+    public List<String> GetAllMessageWith(String text) throws FileNotFoundException, IOException, ParserConfigurationException, SAXException {
+        List<String> Ris = new ArrayList();
         BufferedReader reader = new BufferedReader(new FileReader("GetUpdates.txt"));
         String jsonString = "";
         String line = reader.readLine();
         while (line != null) {
-            //System.out.println(line);
             jsonString += line;
             line = reader.readLine();
         }
@@ -120,20 +120,38 @@ public class GestisciTelegram {
         for (int i = 0; i < arr.length(); i++) {
             JSONObject update = arr.getJSONObject(i);
             JSONObject mess = update.getJSONObject("message");
-            if(mess.getString("text").contains(text))
-            {
-                //aggiungo al vettore
-                //Ris.add("");
-            }
+            rw.ScriviSuFileAppend("MessageWith.txt", mess.toString());
+            Pubblicita(update,text);
         }
         return Ris;
+    }
+
+    public boolean VetPersoneContains(String i) {
+        boolean ris = false;
+
+        for (int j = 0; j < VetPersone.size(); j++) {
+            if (VetPersone.get(j).getIdChat().equals(i)) {
+                ris = true;
+            }
+        }
+        return ris;
+    }
+
+    public int VetPersoneContainsGetPOS(String i) {
+        int pos = -1;
+
+        for (int j = 0; j < VetPersone.size(); j++) {
+            if (VetPersone.get(j).getIdChat().equals(i)) {
+                pos = j;
+            }
+        }
+        return pos;
     }
 
     public void VetPersonetoCSV() {
         try {
 
             FileWriter fw = new FileWriter("Persone.csv");
-
             for (int i = 0; i < VetPersone.size(); i++) {
                 String p = VetPersone.get(i).toCSV() + "\r\n";
                 fw.write(p);
@@ -186,5 +204,41 @@ public class GestisciTelegram {
         VetMessaggi = obj.getJSONArray("result");
     }
 
+    public void Pubblicita(JSONObject update,String text) throws ParserConfigurationException, SAXException, IOException {
+
+        JSONObject mess = update.getJSONObject("message");
+        JSONObject chat = mess.getJSONObject("chat");
+        int id_lastMessage = mess.getInt("message_id");
+        if (mess.getString("text").contains(text)) {
+            //controllo se esiste gia una persona con questo id
+            if (VetPersoneContains(String.valueOf(chat.getInt("id")))) {
+                //prendo la persona
+                int pos = VetPersoneContainsGetPOS(String.valueOf(chat.getInt("id")));
+                Persona temp = VetPersone.get(pos);
+                //guardo l'ultimo id del lastmessage
+                if (temp.getIDLastMessage() < id_lastMessage) {
+                    //modifico la persona
+                    temp.setIDLastMessage(id_lastMessage);
+                    String latlon = OpenStreetMap.myGetLocation(mess.getString("text").substring(text.length() + 1));
+                    String lan = latlon.split(";")[0];
+                    String lon = latlon.split(";")[1];
+                    temp.setLat(Float.valueOf(lan));
+                    temp.setLon(Float.valueOf(lon));
+                    VetPersone.set(pos, temp);
+                }
+                //se non esiste nel vettore creo la persona
+            } else {
+                Persona temp = new Persona();
+                temp.setIDLastMessage(id_lastMessage);
+                String latlon = OpenStreetMap.myGetLocation(mess.getString("text").substring(text.length() + 1));
+                String lan = latlon.split(";")[0];
+                String lon = latlon.split(";")[1];
+                temp.setLat(Float.valueOf(lan));
+                temp.setLon(Float.valueOf(lon));
+                temp.setIdChat(String.valueOf(chat.getInt("id")));
+                VetPersone.add(temp);
+            }
+        }
+    }
 
 }

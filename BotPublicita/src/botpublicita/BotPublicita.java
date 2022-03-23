@@ -26,10 +26,7 @@ public class BotPublicita {
         GestisciTelegram TeleApi=new GestisciTelegram(Token);
         OpenStreetMap osm= new OpenStreetMap();
         osm.myGetLocation("via brusa 6");
-        List<JSONObject> ciao = TeleApi.GetAllMessageWith("ciao");
-        String ciao1="ciao";
-        if(ciao1 == "")
-        {}
+
         
     }
     

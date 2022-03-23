@@ -6,9 +6,12 @@
 package botpublicita;
 
 import TelegramApi.GestisciTelegram;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -31,14 +34,19 @@ public class ThreadGestione extends Thread {
 
     @Override
     public void run() {
+        TeleApi.CaricaVetPersonaFromCSV();
         while (isFinito() == false) {
             try {
                 TeleApi.GetUpdates();
-                
+                TeleApi.GetAllMessageWith("/citta");
                 Thread.sleep(waitMS);
             } catch (IOException ex) {
                 Logger.getLogger(ThreadGestione.class.getName()).log(Level.SEVERE, null, ex);
             } catch (InterruptedException ex) {
+                Logger.getLogger(ThreadGestione.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ParserConfigurationException ex) {
+                Logger.getLogger(ThreadGestione.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SAXException ex) {
                 Logger.getLogger(ThreadGestione.class.getName()).log(Level.SEVERE, null, ex);
             }
 

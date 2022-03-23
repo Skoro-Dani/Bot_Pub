@@ -23,9 +23,9 @@ import org.xml.sax.SAXException;
  */
 public class OpenStreetMap {
 
-    private ReadWriteFile rw = new ReadWriteFile();
+    private static ReadWriteFile rw = new ReadWriteFile();
 
-    public String myGetLocation(String Indirizzo) throws ParserConfigurationException, SAXException, IOException {
+    public static String myGetLocation(String Indirizzo) throws ParserConfigurationException, SAXException, IOException {
         //genero l'URL e scrivo il risultato su file
         String urlParziale = "https://nominatim.openstreetmap.org/search?q=" + URLEncoder.encode(Indirizzo, StandardCharsets.UTF_8) + "&format=xml&addressdetails=1";
         File RispostaSito = rw.ScriviSuFile(urlParziale, "RispostaSito.txt");

@@ -10,8 +10,9 @@ package TelegramApi;
  */
 public class Persona {
     
-    private String IdChat, IDLastMessage, Indirizzo;
+    private String IdChat, Indirizzo;
     private Float lat, lon; 
+    private int IDLastMessage;
 
     public Persona() {
     }
@@ -23,9 +24,9 @@ public class Persona {
         this.lon = p.getLon();
     }
 
-    public Persona(String IdChat, String First_Name, Float lat, Float lon) {
+    public Persona(String IdChat, int IDLastMessage, Float lat, Float lon) {
         this.IdChat = IdChat;
-        this.IDLastMessage = First_Name;
+        this.IDLastMessage = IDLastMessage;
         this.lat = lat;
         this.lon = lon;
     }
@@ -45,7 +46,7 @@ public class Persona {
         return IdChat;
     }
 
-    public String getIDLastMessage() {
+    public int getIDLastMessage() {
         return IDLastMessage;
     }
 
@@ -65,8 +66,8 @@ public class Persona {
         this.IdChat = IdChat;
     }
 
-    public void setIDLastMessage(String First_Name) {
-        this.IDLastMessage = First_Name;
+    public void setIDLastMessage(int IDLastMessage) {
+        this.IDLastMessage = IDLastMessage;
     }
 
     public void setIndirizzo(String Indirizzo) {

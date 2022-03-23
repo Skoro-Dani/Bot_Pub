@@ -35,6 +35,16 @@ public class ReadWriteFile {
 
         return f;
     }
+    public File ScriviSuFileAppend(String NomeFile,String Messaggio) throws MalformedURLException, IOException {
+        File f = new File(NomeFile);
+        FileWriter fw = new FileWriter(f);
+
+        fw.append(Messaggio);
+        fw.flush();
+        fw.close();
+
+        return f;
+    }
 
     public String LeggiDaFile(String nomeFile) throws FileNotFoundException, IOException {
         //variabile di appoggio
