@@ -25,11 +25,12 @@ public class OpenStreetMap {
 
     private static ReadWriteFile rw = new ReadWriteFile();
 
-    public static String myGetLocation(String Indirizzo) throws ParserConfigurationException, SAXException, IOException {
+    public static Place myGetLocation(String Indirizzo) throws ParserConfigurationException, SAXException, IOException {
+
         //genero l'URL e scrivo il risultato su file
         String urlParziale = "https://nominatim.openstreetmap.org/search?q=" + URLEncoder.encode(Indirizzo, StandardCharsets.UTF_8) + "&format=xml&addressdetails=1";
         File RispostaSito = rw.ScriviSuFile(urlParziale, "RispostaSito.txt");
-        System.out.println(urlParziale);
+
         //Parso il file XML scritto prima per ricavare gli oggetti
         DocumentBuilderFactory factory;
         DocumentBuilder builder;
@@ -41,18 +42,12 @@ public class OpenStreetMap {
         document = builder.parse(RispostaSito);
         root = document.getDocumentElement();
         nodelist = root.getElementsByTagName("place");
-        String strlat = "";
-        String strlon = "";
-        for (int i = 0; i < nodelist.getLength(); i++) {
-            node = (Element) nodelist.item(i);
-            strlat = node.getAttribute("lat");
-            strlon = node.getAttribute("lon");
 
-        }
-        return (strlat + ";" + strlon);
+        return new Place((Element) nodelist.item(0));
+
     }
 
-    public static double calcolaDistanza(String lat1,String lon1,String lat2,String lon2){
-        return Math.acos(Math.cos(Math.toRadians(90-Double.valueOf(lat1)))*Math.cos(Math.toRadians(90-Double.valueOf(lat2)))+Math.sin(Math.toRadians(90-Double.valueOf(lat1)))*Math.sin(Math.toRadians(90-Double.valueOf(lat2)))*Math.cos(Math.toRadians(Double.valueOf(lon1)-Double.valueOf(lon2))))*6371*1000;
+    public static double calcolaDistanza(Place place1, Place place2) {
+        return Math.acos(Math.cos(Math.toRadians(90 - Double.valueOf(place1.getLat()))) * Math.cos(Math.toRadians(90 - Double.valueOf(place2.getLat()))) + Math.sin(Math.toRadians(90 - Double.valueOf(place1.getLat()))) * Math.sin(Math.toRadians(90 - Double.valueOf(place2.getLat()))) * Math.cos(Math.toRadians(Double.valueOf(place1.getLon()) - Double.valueOf(place2.getLon())))) * 6371 * 1000;
     }
 }

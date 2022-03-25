@@ -11,34 +11,34 @@ package TelegramApi;
 public class Persona {
     
     private String IdChat, Indirizzo;
-    private Float lat, lon; 
+    private Place place;
     private int IDLastMessage;
 
     public Persona() {
     }
-    
+    //
+    //public Persona() {
+    //}
     public Persona(Persona p){
         this.IdChat = p.getIdChat();
         this.IDLastMessage = p.getIDLastMessage();
-        this.lat = p.getLat();
-        this.lon = p.getLon();
+        this.place = p.getPlace();
     }
 
-    public Persona(String IdChat, int IDLastMessage, Float lat, Float lon) {
+    public Persona(String IdChat, int IDLastMessage, Place place) {
         this.IdChat = IdChat;
         this.IDLastMessage = IDLastMessage;
-        this.lat = lat;
-        this.lon = lon;
+        this.place = place;
     }
     
     @Override
     public String toString() {
-        String  s = "IDLastMessage:" +  IDLastMessage + "-IdChat:" + IdChat + "-Indirizzo:" + Indirizzo + "-Latitudine:" + Float.toString(lat) + "-Longitudine:" + Float.toString(lon);
+        String  s = "IDLastMessage:" +  IDLastMessage + "-IdChat:" + IdChat + "-Indirizzo:" + Indirizzo + "-Latitudine:" + place.getLat() + "-Longitudine:" + place.getLon();
         return s;
     }
     
     public String toCSV(){
-        String  s = IDLastMessage + ";" + IdChat + ";" + Float.toString(lat) + ";" + Float.toString(lon);
+        String  s = IDLastMessage + ";" + IdChat + ";" + place.toCSV();
         return s;
     }
 
@@ -54,13 +54,11 @@ public class Persona {
         return Indirizzo;
     }
 
-    public Float getLat() {
-        return lat;
+    public Place getPlace() {
+        return place;
     }
 
-    public Float getLon() {
-        return lon;
-    }
+
 
     public void setIdChat(String IdChat) {
         this.IdChat = IdChat;
@@ -74,13 +72,11 @@ public class Persona {
         this.Indirizzo = Indirizzo;
     }
 
-    public void setLat(Float lat) {
-        this.lat = lat;
+    public void setPlace(Place place) {
+        this.place = place;
     }
 
-    public void setLon(Float lon) {
-        this.lon = lon;
-    }
+    
     
     
 }

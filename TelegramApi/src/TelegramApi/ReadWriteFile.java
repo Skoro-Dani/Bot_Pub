@@ -35,6 +35,19 @@ public class ReadWriteFile {
 
         return f;
     }
+    public File ScriviSuFileURL(URL url, String NomeFile) throws MalformedURLException, IOException {
+        Scanner sc = new Scanner(url.openStream());
+        sc.useDelimiter("\u001a");
+
+        File f = new File(NomeFile);
+        FileWriter fw = new FileWriter(f);
+
+        fw.write(sc.next());
+        fw.flush();
+        fw.close();
+
+        return f;
+    }
     public File ScriviSuFileAppend(String NomeFile,String Messaggio) throws MalformedURLException, IOException {
         File f = new File(NomeFile);
         FileWriter fw = new FileWriter(f);

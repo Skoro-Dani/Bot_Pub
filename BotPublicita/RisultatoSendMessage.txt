@@ -1,1 +1,1 @@
-{"ok":true,"result":{"message_id":35,"from":{"id":5289178489,"is_bot":true,"first_name":"Publicita_Skoro","username":"PublicitaSkoro_bot"},"chat":{"id":506257867,"first_name":"Skoro","username":"SK0R0","type":"private"},"date":1648071510,"text":"ciao daniel"}}
+{"ok":true,"result":{"message_id":51,"from":{"id":5289178489,"is_bot":true,"first_name":"Publicita_Skoro","username":"PublicitaSkoro_bot"},"chat":{"id":506257867,"first_name":"Skoro","username":"SK0R0","type":"private"},"date":1648210295,"text":"prova"}}
